@@ -2,6 +2,8 @@
 
 require_once("common.php");
 
+$LOBSTER_DEBUG = false;
+
 function lobster_API($config, $action, $params = array()) {
 	$fields = array();
 	$fields['action'] = $action;
@@ -27,6 +29,12 @@ function lobster_API($config, $action, $params = array()) {
 
 	//execute post
 	$response = curl_exec($ch);
+
+	if($response === false) {
+		$message = $LOBSTER_DEBUG ? curl_error($ch) : "failed to communicate with Lobster";
+		return array('success' => false, 'message' => $message);
+	}
+
 	$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
 	//close connection
